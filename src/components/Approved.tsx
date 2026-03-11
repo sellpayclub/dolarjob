@@ -1,13 +1,27 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Logo } from './Logo';
 import { CheckCircle2, MapPin, Smartphone, Clock, Globe2 } from 'lucide-react';
 
 export function Approved({ userName }: { userName: string }) {
+  const [videoSrc, setVideoSrc] = useState<string>("about:blank");
+
   useEffect(() => {
-    const s = document.createElement("script");
-    s.src = "https://scripts.converteai.net/lib/js/smartplayer-wc/v4/sdk.js";
-    s.async = true;
-    document.head.appendChild(s);
+    // Inject ConverteAI SDK
+    const scriptId = 'converteai-sdk';
+    if (!document.getElementById(scriptId)) {
+      const s = document.createElement("script");
+      s.id = scriptId;
+      s.src = "https://scripts.converteai.net/lib/js/smartplayer-wc/v4/sdk.js";
+      s.async = true;
+      document.head.appendChild(s);
+    }
+
+    // Calculate video source URL
+    const src = 'https://scripts.converteai.net/ceaefeeb-feef-4b52-8911-9ec9de0d5b6b/players/69b1d217243e791f07268b5a/v4/embed.html' 
+      + (window.location.search || '?') 
+      + '&vl=' + encodeURIComponent(window.location.href);
+    
+    setVideoSrc(src);
   }, []);
 
   return (
@@ -91,17 +105,10 @@ export function Approved({ userName }: { userName: string }) {
                   <iframe 
                     frameBorder="0" 
                     allowFullScreen 
-                    src="about:blank" 
+                    src={videoSrc} 
                     id="ifr_69b1d217243e791f07268b5a" 
                     style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} 
                     referrerPolicy="origin" 
-                    onLoad={(e) => {
-                      const target = e.target as HTMLIFrameElement;
-                      if (!target.dataset.loaded) {
-                        target.dataset.loaded = 'true';
-                        target.src = 'https://scripts.converteai.net/ceaefeeb-feef-4b52-8911-9ec9de0d5b6b/players/69b1d217243e791f07268b5a/v4/embed.html' + (window.location.search || '?') + '&vl=' + encodeURIComponent(window.location.href);
-                      }
-                    }}
                   ></iframe>
                 </div>
               </div>
